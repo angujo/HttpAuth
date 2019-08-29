@@ -16,13 +16,13 @@ abstract class AuthAbstract
      *
      * @return AuthAbstract
      */
-    public function setRealm($realm)
+    public function setRealm(&$realm)
     {
-        $this->_realm = $realm;
+        $this->_realm =& $realm;
         return $this;
     }
 
     public abstract function getUsername();
 
-    public abstract function verify($username,$password);
+    public abstract function verify($username, $password);
 }
