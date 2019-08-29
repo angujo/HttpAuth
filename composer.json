@@ -1,0 +1,19 @@
+{
+    "name": "angujo/httpauth",
+    "description": "Http Auth",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "angujo",
+            "email": "angujomondi@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Angujo\\HttpAuth\\": "src/"
+        }
+    },
+    "minimum-stability": "dev",
+    "require": {}
+}
