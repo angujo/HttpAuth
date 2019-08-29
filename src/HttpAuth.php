@@ -21,21 +21,24 @@ class HttpAuth
     const AUTH_BASIC     = 'basic';
     const AUTH_DIGEST    = 'digest';
 
-    private $my_realm = 'angujo/httpauth-realm-2019';
+    private $my_realm = 'angujorealm2019';
 
     /**
      * @var DigestAuth
      */
     protected $auth;
 
-    public function __construct($auth)
+    public function __construct($auth_name, $realm = null)
     {
-        if (0 === strcasecmp($auth, self::AUTH_DIGEST)) {
-            $this->auth = new DigestAuth();
-        } else {
-            $auth = new BasicAuth();
+        if ($realm && is_string($realm)) {
+            $this->my_realm = $realm;
         }
-        $auth->setRealm($this->my_realm);
+        if (0 === strcasecmp($auth_name, self::AUTH_DIGEST)) {
+            $this->auth = new DigestAuth($this->my_realm);
+        } else {
+            $this->auth = new BasicAuth();
+        }
+        $this->auth->setRealm($this->my_realm);
     }
 
     public function setRealm($realm)
@@ -78,11 +81,13 @@ class HttpAuth
     /**
      * @param callable|null $verifier
      *
+     * @param null          $realm
+     *
      * @return HttpAuth|bool|mixed
      */
-    public static function digest(callable $verifier = null)
+    public static function digest(callable $verifier = null, $realm = null)
     {
-        $me = new self(self::AUTH_DIGEST);
+        $me = new self(self::AUTH_DIGEST, $realm);
         if ($verifier && is_callable($verifier)) {
             return $me->handleLogin($verifier);
         }

@@ -39,10 +39,11 @@ class DigestAuth extends AuthAbstract
     /**
      * DigestAuth constructor.
      *
-     * @throws HttpAuthException
+     * @param null $realm
      */
-    public function __construct()
+    public function __construct($realm=null)
     {
+        $this->setRealm($realm);
         $this->parse();
         $this->_request_method = isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : 'GET';
     }
@@ -76,8 +77,10 @@ class DigestAuth extends AuthAbstract
             unset($needed_parts[$m[1]]);
         }
         if ($needed_parts) {
-            throw new HttpAuthException('Missing Authentication Parameters: '.implode(', ', $needed_parts));
+            $this->sendHeaders();
+            die('Missing Authentication Parameters: '.implode(', ', array_keys($needed_parts)));
         }
+        //print_r($data);
         foreach ($data as $prop => $datum) {
             $this->{"_{$prop}"} = $datum;
         }
@@ -100,6 +103,7 @@ class DigestAuth extends AuthAbstract
     {
         header('HTTP/1.1 401 Unauthorized');
         header(sprintf('WWW-Authenticate: Digest realm="%s", qop="auth", nonce="%s",opaque="%s"', $this->_realm, uniqid(), md5($this->_realm)));
+
     }
 
     private function validResponse($password)
@@ -107,6 +111,8 @@ class DigestAuth extends AuthAbstract
         $A1       = md5(sprintf('%s:%s:%s', $this->_username, $this->_realm, $password));
         $A2       = md5(sprintf('%s:%s', $this->_request_method, $this->_uri));
         $response = md5(sprintf('%s:%s:%s:%s:%s:%s', $A1, $this->_nonce, $this->_nc, $this->_cnonce, $this->_qop, $A2));
+        //print_r(get_object_vars($this));
+        //print_r($password);
         return $response;
     }
 
