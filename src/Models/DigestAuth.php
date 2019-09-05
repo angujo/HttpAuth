@@ -84,7 +84,7 @@ class DigestAuth extends AuthAbstract
         foreach ($data as $prop => $datum) {
             $this->{"_{$prop}"} = $datum;
         }
-        header(sprintf('WWW-Authenticate: Digest realm="%s", qop="auth", nonce="%s",opaque="%s"', $this->_realm, uniqid(), md5($this->_realm)));
+        header(sprintf('WWW-Authenticate: Digest realm="%s", nonce="%s",opaque="%s"', $this->_realm, uniqid(), md5($this->_realm)));
     }
 
     private function getAuthDigest()
